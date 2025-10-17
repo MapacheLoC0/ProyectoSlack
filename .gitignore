@@ -1,0 +1,28 @@
+# Archivos de credenciales (NUNCA SUBIR)
+canal.env
+.env
+*.env
+
+# Node modules
+node_modules/
+
+# Archivos subidos por usuarios
+uploads/
+*.csv
+*.xlsx
+*.xls
+
+# Archivos generados
+package-lock.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/

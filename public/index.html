@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semillero - Creador de Canales Slack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen p-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    Creador de Canales Slack
+                </h1>
+                <p class="text-gray-600">
+                    Sube un archivo con los correos, ingresa el nombre y descripción del canal, y opcionalmente el enlace de invitación al workspace.
+                </p>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-blue-900 mb-2">📋 Formato del archivo:</h3>
+                <div class="text-sm text-blue-800 space-y-1">
+                    <p>Debe contener una columna con los correos electrónicos de los usuarios.</p>
+                    <p>Formatos soportados: <b>.csv</b>, <b>.xlsx</b>, <b>.xls</b></p>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="space-y-6">
+                <!-- Nombre del canal -->
+                <div>
+                    <label for="channelName" class="block text-gray-700 font-medium mb-1">Nombre del canal</label>
+                    <input id="channelName" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ej: semillero2025" />
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label for="channelDescription" class="block text-gray-700 font-medium mb-1">Descripción (opcional)</label>
+                    <input id="channelDescription" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Describe el canal..." />
+                </div>
+
+                <!-- Enlace de invitación al workspace -->
+                <div>
+                    <label for="workspaceInviteLink" class="block text-gray-700 font-medium mb-1">Enlace de invitación al workspace (opcional)</label>
+                    <input id="workspaceInviteLink" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="https://slack.com/invite/..." />
+                </div>
+
+                <!-- Upload archivo -->
+                <div>
+                    <label id="fileLabel" for="fileInput" class="block text-gray-700 font-medium mb-1 cursor-pointer">Haz clic para seleccionar un archivo</label>
+                    <input id="fileInput" type="file" class="hidden" accept=".csv,.xlsx,.xls" />
+                </div>
+
+                <!-- Botones -->
+                <div class="flex gap-3">
+                    <button id="submitBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                        <span id="btnText">Crear Canal e Invitar</span>
+                    </button>
+                    <button id="resetBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hidden">Limpiar</button>
+                </div>
+            </div>
+
+            <!-- Mensajes de estado -->
+            <div id="statusMessage" class="mt-6 hidden"></div>
+
+            <!-- Resultados -->
+            <div id="resultsContainer" class="mt-6 hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedFile = null;
+        let processing = false;
+
+        // Elementos del DOM
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.getElementById('fileLabel');
+        const channelName = document.getElementById('channelName');
+        const channelDescription = document.getElementById('channelDescription');
+        const workspaceInviteLink = document.getElementById('workspaceInviteLink');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const btnText = document.getElementById('btnText');
+        const statusMessage = document.getElementById('statusMessage');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // Manejar selección de archivo
+        fileLabel.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                fileLabel.textContent = `Archivo seleccionado: ${file.name}`;
+                fileLabel.classList.add('text-gray-700', 'font-medium');
+                resetBtn.classList.remove('hidden');
+            } else {
+                selectedFile = null;
+                fileLabel.textContent = 'Haz clic para seleccionar un archivo';
+                fileLabel.classList.remove('text-gray-700', 'font-medium');
+            }
+        });
+
+        // Manejar submit
+        submitBtn.addEventListener('click', async function() {
+            if (processing) return;
+
+            const name = channelName.value.trim();
+            const description = channelDescription.value.trim();
+            const inviteLink = workspaceInviteLink.value.trim();
+
+            // Validaciones
+            if (!name) {
+                showMessage('error', 'Debes ingresar el nombre del canal.');
+                return;
+            }
+            if (!selectedFile) {
+                showMessage('error', 'Debes seleccionar un archivo.');
+                return;
+            }
+
+            // Iniciar proceso
+            processing = true;
+            submitBtn.disabled = true;
+            btnText.innerHTML = `<span>Procesando...</span>`;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('channelName', name);
+                formData.append('channelDescription', description);
+                formData.append('workspaceInviteLink', inviteLink);
+
+                const response = await fetch('/api/create-slack-channel', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('success', result.message);
+                    showResults(result);
+                    resetBtn.classList.remove('hidden');
+                } else {
+                    showMessage('error', result.error || 'Error desconocido');
+                }
+            } catch (error) {
+                showMessage('error', 'Error al procesar la solicitud: ' + error.message);
+            } finally {
+                processing = false;
+                submitBtn.disabled = false;
+                btnText.innerHTML = `<span>Crear Canal e Invitar</span>`;
+            }
+        });
+
+        // Manejar reset
+        resetBtn.addEventListener('click', function() {
+            selectedFile = null;
+            fileInput.value = '';
+            channelName.value = '';
+            channelDescription.value = '';
+            workspaceInviteLink.value = '';
+            fileLabel.textContent = 'Haz clic para seleccionar un archivo';
+            fileLabel.classList.remove('text-gray-700', 'font-medium');
+            hideMessage();
+            resultsContainer.innerHTML = '';
+            resultsContainer.classList.add('hidden');
+            resetBtn.classList.add('hidden');
+        });
+
+        // Funciones auxiliares
+        function showMessage(type, message) {
+            const isSuccess = type === 'success';
+            statusMessage.className = `mt-6 p-4 rounded-lg flex items-start gap-3 ${
+                isSuccess ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+            }`;
+            statusMessage.innerHTML = `
+                <p class="text-sm ${isSuccess ? 'text-green-800' : 'text-red-800'}">${message}</p>
+            `;
+            statusMessage.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            statusMessage.classList.add('hidden');
+        }
+
+        function showResults(data) {
+            let html = `<div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 class="font-semibold text-gray-900 mb-2">Resultados</h3>
+                <ul class="text-sm text-gray-800 space-y-1">`;
+
+            if (data.members && data.members.length > 0) {
+                data.members.forEach(m => {
+                    html += `<li>
+                        <b>${m.email}</b>: ${m.status === 'success' ? 'Invitado al canal' : 
+                        m.status === 'email_sent' ? 'Email enviado' : 
+                        m.status === 'email_failed' ? 'Error email' : 
+                        m.status === 'failed' ? 'Error Slack' : 'Pendiente'}
+                        ${m.reason ? ` (${m.reason})` : ''}
+                    </li>`;
+                });
+            }
+
+            if (data.invalidEmails && data.invalidEmails.length > 0) {
+                html += `<li class="text-red-600 mt-2">Correos inválidos:</li>`;
+                data.invalidEmails.forEach(e => {
+                    html += `<li class="text-red-600">${e.email} (${e.reason})</li>`;
+                });
+            }
+
+            html += `</ul></div>`;
+            resultsContainer.innerHTML = html;
+            resultsContainer.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
