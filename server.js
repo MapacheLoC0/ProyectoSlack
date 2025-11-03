@@ -6,7 +6,7 @@ const { WebClient } = require('@slack/web-api');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -200,44 +200,51 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
       await new Promise(resolve => setTimeout(resolve, 150));
     }
 
-    // 9. ENVIAR EMAILS A NUEVOS USUARIOS
+    // 9. ENVIAR EMAILS A NUEVOS USUARIOS CON SENDGRID
     let emailsSent = 0;
     if (newUsers.length > 0 && config.workspaceInviteLink) {
-      console.log('\n📧 Enviando invitaciones por email...');
+      console.log('\n📧 Enviando invitaciones por email con SendGrid...');
       
-      // Configurar transporter si hay credenciales
-      if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
-        emailTransporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-          }
-        });
-
+      if (process.env.SENDGRID_API_KEY && process.env.EMAIL_FROM) {
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        
         for (const user of newUsers) {
           try {
-            await emailTransporter.sendMail({
-              from: process.env.EMAIL_USER,
+            await sgMail.send({
               to: user.email,
+              from: process.env.EMAIL_FROM,
               subject: `Invitación a Slack - ${config.channelName}`,
               html: `
-                <h2>¡Bienvenido al equipo!</h2>
-                <p>Has sido invitado al canal <strong>${config.channelName}</strong> en Slack.</p>
-                <p><strong>Paso 1:</strong> Únete al workspace:</p>
-                <p><a href="${config.workspaceInviteLink}" style="background: #611f69; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Unirme a Slack</a></p>
-                <p><strong>Paso 2:</strong> Busca el canal <strong>#${config.channelName}</strong></p>
-                ${config.channelDescription ? `<p><em>${config.channelDescription}</em></p>` : ''}
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #611f69;">¡Bienvenido al equipo!</h2>
+                  <p>Has sido invitado al canal <strong>${config.channelName}</strong> en Slack.</p>
+                  <p><strong>Paso 1:</strong> Únete al workspace:</p>
+                  <p style="text-align: center; margin: 30px 0;">
+                    <a href="${config.workspaceInviteLink}" 
+                      style="background: #611f69; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                      Unirme a Slack
+                    </a>
+                  </p>
+                  <p><strong>Paso 2:</strong> Busca el canal <strong>#${config.channelName}</strong></p>
+                  ${config.channelDescription ? `<p style="color: #666; font-style: italic;"><em>${config.channelDescription}</em></p>` : ''}
+                  <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+                  <p style="color: #999; font-size: 12px;">Este es un correo automático del sistema Semillero Slack</p>
+                </div>
               `
             });
+            
             emailsSent++;
             console.log(`   ✅ Email enviado: ${user.email}`);
           } catch (error) {
-            console.log(`   ❌ Error email: ${user.email}`);
+            console.log(`   ❌ Error email: ${user.email} - ${error.message}`);
           }
+          
+          // Pausa para evitar rate limits
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       } else {
-        console.log('   ⚠️  No hay credenciales de email configuradas');
+        console.log('   ⚠️  SendGrid no configurado (falta SENDGRID_API_KEY o EMAIL_FROM)');
       }
     }
 
