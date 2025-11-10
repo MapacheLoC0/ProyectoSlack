@@ -1,287 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semillero - Creador de Canales Slack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unicatólica - Sistema Automático Slack</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #38678f;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 30px 10px;
+    }
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 160px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px 40px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      margin-top: 100px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #000;
+    }
+    .content-box {
+      background-color: #5b86a1;
+      color: #fff;
+      padding: 40px 0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    .btn-yellow {
+      background-color: #ffd766;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .btn-yellow:hover {
+      background-color: #ffcb33;
+    }
+    .drop-zone {
+      border: 2px dashed #ffd766;
+      border-radius: 8px;
+      padding: 25px;
+      margin: 20px 0;
+      cursor: pointer;
+      transition: background 0.3s, border 0.3s;
+    }
+    .drop-zone:hover {
+      background-color: rgba(255, 215, 102, 0.1);
+      border-color: #ffaa00;
+    }
+    .btn-blue {
+      background-color: #5b86a1;
+      border: none;
+      color: #fff;
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn-blue:hover {
+      background-color: #467289;
+    }
+    .result-box {
+      background-color: #e7f0f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: left;
+      display: none;
+    }
+    .excel-format {
+      background-color: #d0e3f5;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: left;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #0a3055;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen p-6">
-    <div class="max-w-3xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                     Sistema Automático Slack
-                </h1>
-                <p class="text-gray-600">
-                    
-                </p>
-            </div>
+<body>
+  <img src="https://www.unicatolica.edu.co/wp-content/uploads/2021/03/logo-unicatolica.png" class="logo" alt="Unicatólica Logo" />
 
-            <!-- Botón de descarga de plantilla -->
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-semibold text-green-900 mb-1"> </h3>
-                        <p class="text-sm text-green-700">Descarga la plantilla de Excel para empezar</p>
-                    </div>
-                    <button id="downloadTemplate" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Descargar Plantilla
-                    </button>
-                </div>
-            </div>
+  <div class="container">
+    <div class="card">
+      <h1>Sistema Automático Slack</h1>
 
-            <!-- Formato del Excel -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 class="font-semibold text-blue-900 mb-2">📋 Formato del Excel:</h3>
-                <div class="text-sm text-blue-800 space-y-1">
-                    <p><strong>Fila 1:</strong> NOMBRE_CANAL | nombre-del-canal</p>
-                    <p><strong>Fila 2:</strong> DESCRIPCION | Descripción del canal</p>
-                    <p><strong>Fila 3:</strong> SLACK_TOKEN | xoxb-tu-token</p>
-                    <p><strong>Fila 4:</strong> WORKSPACE_INVITE | https://slack.com/invite/... (opcional)</p>
-                    <p><strong>Fila 5:</strong> CORREO</p>
-                    <p><strong>Fila 6+:</strong> Un correo por fila</p>
-                </div>
-            </div>
+      <div class="content-box">contenido</div>
 
-            <!-- Zona de subida -->
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-blue-500 transition cursor-pointer" id="dropZone">
-                <input type="file" id="fileInput" class="hidden" accept=".xlsx,.xls" />
-                <div id="uploadPrompt">
-                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <p class="text-gray-700 font-medium mb-2">Haz clic o arrastra el archivo Excel</p>
-                    <p class="text-sm text-gray-500">Solo archivos .xlsx o .xls</p>
-                </div>
-                <div id="fileSelected" class="hidden">
-                    <svg class="mx-auto h-12 w-12 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-gray-700 font-medium" id="fileName"></p>
-                    <button id="changeFile" class="text-sm text-blue-600 hover:underline mt-2">Cambiar archivo</button>
-                </div>
-            </div>
+      <button class="btn-yellow" id="downloadTemplate">descargar plantilla</button>
 
-            <!-- Botón procesar -->
-            <button id="processBtn" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
-                <span id="btnText">Selecciona un archivo para continuar</span>
-            </button>
+      <div class="excel-format">
+        <p><b>Formato del Excel:</b></p>
+        <p>Fila 1: NOMBRE_CANAL | nombre-del-canal</p>
+        <p>Fila 2: DESCRIPCION | Descripción del canal</p>
+        <p>Fila 3: SLACK_TOKEN | xoxb-tu-token</p>
+        <p>Fila 4: WORKSPACE_INVITE | https://slack.com/invite/... (opcional)</p>
+        <p>Fila 5: CORREO</p>
+        <p>Fila 6+: Un correo por fila</p>
+      </div>
 
-            <!-- Mensajes -->
-            <div id="statusMessage" class="mt-6 hidden"></div>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" class="hidden" accept=".xlsx,.xls" />
+        <p>Haz clic o arrastra el archivo<br><small>solo archivos xlsx o xls.</small></p>
+      </div>
 
-            <!-- Resultados -->
-            <div id="resultsContainer" class="mt-6 hidden"></div>
-        </div>
+      <button class="btn-blue" id="uploadBtn" disabled>Subir</button>
+
+      <div class="result-box" id="results">Canal creado exitosamente. 1 usuario agregado.</div>
     </div>
+  </div>
 
-    <script>
-        let selectedFile = null;
-        let processing = false;
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const results = document.getElementById('results');
+    const downloadTemplate = document.getElementById('downloadTemplate');
+    let selectedFile = null;
 
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const uploadPrompt = document.getElementById('uploadPrompt');
-        const fileSelected = document.getElementById('fileSelected');
-        const fileName = document.getElementById('fileName');
-        const changeFile = document.getElementById('changeFile');
-        const processBtn = document.getElementById('processBtn');
-        const btnText = document.getElementById('btnText');
-        const statusMessage = document.getElementById('statusMessage');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const downloadTemplate = document.getElementById('downloadTemplate');
+    // Descargar plantilla
+    downloadTemplate.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = 'plantilla_slack.xlsx'; // ajusta la ruta si es distinta
+      link.download = 'plantilla_slack.xlsx';
+      link.click();
+    });
 
-        // ==========================================
-        // DESCARGAR PLANTILLA
-        // ==========================================
-        downloadTemplate.addEventListener('click', async () => {
-            try {
-                downloadTemplate.disabled = true;
-                downloadTemplate.innerHTML = '<span>Descargando...</span>';
+    // Drop zone interacciones
+    dropZone.addEventListener('click', () => fileInput.click());
 
-                const response = await fetch('/api/download-template');
-                const blob = await response.blob();
-                
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'plantilla_slack.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(255,215,102,0.15)';
+    });
 
-                showMessage('success', '✅ Plantilla descargada. Ábrela, llénala y súbela aquí.');
-            } catch (error) {
-                showMessage('error', 'Error descargando plantilla: ' + error.message);
-            } finally {
-                downloadTemplate.disabled = false;
-                downloadTemplate.innerHTML = `
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Descargar Plantilla
-                `;
-            }
-        });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
 
-        // ==========================================
-        // MANEJO DE ARCHIVOS
-        // ==========================================
-        dropZone.addEventListener('click', (e) => {
-            if (e.target === changeFile) return;
-            fileInput.click();
-        });
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
+        selectedFile = file;
+        dropZone.innerHTML = `<b>${file.name}</b>`;
+        uploadBtn.disabled = false;
+      } else {
+        alert('Solo se permiten archivos Excel (.xlsx o .xls)');
+      }
+    });
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-blue-500', 'bg-blue-50');
-        });
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        selectedFile = file;
+        dropZone.innerHTML = `<b>${file.name}</b>`;
+        uploadBtn.disabled = false;
+      }
+    });
 
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-blue-500', 'bg-blue-50');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-blue-500', 'bg-blue-50');
-            const file = e.dataTransfer.files[0];
-            if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
-                handleFile(file);
-            } else {
-                showMessage('error', 'Por favor sube un archivo Excel (.xlsx o .xls)');
-            }
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFile(file);
-        });
-
-        changeFile.addEventListener('click', (e) => {
-            e.stopPropagation();
-            fileInput.value = '';
-            selectedFile = null;
-            uploadPrompt.classList.remove('hidden');
-            fileSelected.classList.add('hidden');
-            processBtn.disabled = true;
-            btnText.textContent = 'Selecciona un archivo para continuar';
-            hideMessage();
-            resultsContainer.classList.add('hidden');
-        });
-
-        function handleFile(file) {
-            selectedFile = file;
-            fileName.textContent = file.name;
-            uploadPrompt.classList.add('hidden');
-            fileSelected.classList.remove('hidden');
-            processBtn.disabled = false;
-            btnText.textContent = '🚀 Procesar y crear canal';
-        }
-
-        // ==========================================
-        // PROCESAR ARCHIVO
-        // ==========================================
-        processBtn.addEventListener('click', async () => {
-            if (!selectedFile || processing) return;
-
-            processing = true;
-            processBtn.disabled = true;
-            btnText.textContent = '⏳ Procesando...';
-            hideMessage();
-
-            try {
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-
-                const response = await fetch('/api/auto-create-channel', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showMessage('success', result.message);
-                    showResults(result);
-                } else {
-                    showMessage('error', result.error || 'Error desconocido');
-                }
-            } catch (error) {
-                showMessage('error', 'Error al procesar: ' + error.message);
-            } finally {
-                processing = false;
-                processBtn.disabled = false;
-                btnText.textContent = '🚀 Procesar otro archivo';
-            }
-        });
-
-        // ==========================================
-        // FUNCIONES AUXILIARES
-        // ==========================================
-        function showMessage(type, message) {
-            const isSuccess = type === 'success';
-            statusMessage.className = `mt-6 p-4 rounded-lg ${
-                isSuccess ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-            }`;
-            statusMessage.innerHTML = `
-                <p class="text-sm ${isSuccess ? 'text-green-800' : 'text-red-800'}">${message}</p>
-            `;
-            statusMessage.classList.remove('hidden');
-        }
-
-        function hideMessage() {
-            statusMessage.classList.add('hidden');
-        }
-
-        function showResults(data) {
-            let html = `<div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h3 class="font-semibold text-gray-900 mb-3">📊 Resultados del proceso</h3>
-                
-                <div class="space-y-2 text-sm">
-                    <p><strong>Canal:</strong> ${data.channelName || 'N/A'}</p>
-                    <p><strong>Descripción:</strong> ${data.channelDescription || 'Sin descripción'}</p>
-                    <p><strong>ID del canal:</strong> <code class="bg-gray-200 px-2 py-1 rounded">${data.channelId || 'N/A'}</code></p>
-                </div>
-
-                <div class="mt-4 pt-4 border-t border-gray-300">
-                    <h4 class="font-semibold mb-2">👥 Resumen de usuarios:</h4>
-                    <ul class="space-y-1 text-sm text-gray-700">`;
-
-            if (data.summary) {
-                html += `
-                    <li>✅ Invitados exitosamente: <strong>${data.summary.existingInvited || 0}</strong></li>
-                    <li>❌ Errores al invitar: <strong>${data.summary.existingFailed || 0}</strong></li>
-                    <li>📧 Emails enviados: <strong>${data.summary.newUsersEmailed || 0}</strong></li>
-                    <li>⏳ Pendientes: <strong>${data.summary.newUsersPending || 0}</strong></li>
-                    <li>🚫 Correos inválidos: <strong>${data.summary.invalidEmails || 0}</strong></li>
-                `;
-            }
-
-            html += `</ul></div>`;
-
-            if (data.existingUsers && data.existingUsers.length > 0) {
-                html += `<div class="mt-4 pt-4 border-t border-gray-300">
-                    <h4 class="font-semibold mb-2">📋 Detalle por usuario:</h4>
-                    <ul class="space-y-1 text-xs text-gray-600 max-h-40 overflow-y-auto">`;
-                
-                data.existingUsers.forEach(u => {
-                    const icon = u.status === 'invited' ? '✅' : '❌';
-                    html += `<li>${icon} ${u.email} ${u.reason ? `(${u.reason})` : ''}</li>`;
-                });
-                
-                html += `</ul></div>`;
-            }
-
-            html += `</div>`;
-            resultsContainer.innerHTML = html;
-            resultsContainer.classList.remove('hidden');
-        }
-    </script>
+    // Simulación de carga
+    uploadBtn.addEventListener('click', () => {
+      if (!selectedFile) return;
+      uploadBtn.textContent = 'Procesando...';
+      uploadBtn.disabled = true;
+      setTimeout(() => {
+        results.style.display = 'block';
+        uploadBtn.textContent = 'Subir';
+        uploadBtn.disabled = false;
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
