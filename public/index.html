@@ -5,22 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unicatólica - Sistema Automático Slack</title>
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #44749d;
       color: #333;
-      overflow: hidden;
     }
+    
     .container {
+      height: 100vh;
+      overflow-y: auto; /* Scroll aquí */
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 30px 10px;
-      overflow-y: auto;
+      justify-content: flex-start; /* Cambiado a flex-start */
+      padding: 120px 20px 40px; /* Más espacio arriba y abajo */
     }
+    
     .logo {
       position: fixed;
       top: 30px;
@@ -28,6 +40,7 @@
       width: 200px;
       z-index: 10;
     }
+    
     .card {
       background-color: #fff;
       border-radius: 10px;
@@ -35,14 +48,16 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
       max-width: 420px;
       width: 100%;
-      margin-top: 100px;
+      margin-bottom: 40px; /* Espacio al final */
     }
+    
     h1 {
       text-align: center;
       margin-bottom: 20px;
       font-size: 1.8rem;
       color: #000;
     }
+    
     .content-box {
       background-color: rgba(95, 138, 194, 0.2);
       color: #000;
@@ -50,21 +65,25 @@
       border-radius: 8px;
       margin-bottom: 20px;
     }
+    
     .content-box h3 {
       text-align: center;
       margin-top: 0;
       margin-bottom: 15px;
       font-size: 1.2rem;
     }
+    
     .content-box p {
       text-align: left;
       margin: 4px 0;
       font-size: 0.95rem;
     }
+    
     .btn-container {
       text-align: center;
       margin-top: 15px;
     }
+    
     .btn-yellow {
       background-color: #ffce5c;
       border: none;
@@ -74,13 +93,16 @@
       font-weight: 600;
       transition: background 0.3s;
     }
+    
     .btn-yellow:hover {
       background-color: #ffcb33;
     }
+    
     .btn-yellow:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
+    
     .drop-zone {
       border: 2px dashed #ffd766;
       border-radius: 8px;
@@ -91,19 +113,23 @@
       cursor: pointer;
       transition: background 0.3s, border 0.3s;
     }
+    
     .drop-zone:hover {
       background-color: rgba(255, 215, 102, 0.1);
       border-color: #ffaa00;
     }
+    
     .drop-zone p {
       margin: 0;
       opacity: 0.8;
       font-weight: 500;
       letter-spacing: 0.5px;
     }
+    
     .drop-zone input[type="file"] {
       display: none;
     }
+    
     .btn-blue {
       background-color: #5b86a1;
       border: none;
@@ -115,30 +141,37 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+    
     .btn-blue:hover:not(:disabled) {
       background-color: #467289;
     }
+    
     .btn-blue:disabled {
       background-color: #99a9b5;
       cursor: not-allowed;
     }
+    
     .message {
       padding: 12px;
       border-radius: 6px;
       margin-top: 15px;
       font-size: 0.9rem;
       display: none;
+      animation: slideDown 0.3s ease;
     }
+    
     .message.success {
       background-color: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
+    
     .message.error {
       background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
+    
     .result-box {
       background-color: #e7f0f8;
       padding: 15px;
@@ -146,28 +179,93 @@
       margin-top: 20px;
       text-align: left;
       display: none;
-      max-height: 400px;
-      overflow-y: auto;
+      animation: slideDown 0.3s ease;
     }
+    
     .result-box h3 {
       margin-top: 0;
       color: #0a3055;
+      font-size: 1.2rem;
     }
+    
+    .result-box h4 {
+      margin-bottom: 5px;
+      margin-top: 15px;
+      font-size: 0.95rem;
+      color: #0a3055;
+    }
+    
     .result-box p {
       margin: 5px 0;
       font-size: 0.9rem;
     }
+    
     .result-box ul {
       list-style: none;
       padding: 0;
       margin: 10px 0;
     }
+    
     .result-box li {
       padding: 5px;
       margin: 3px 0;
       background: #fff;
       border-radius: 4px;
       font-size: 0.85rem;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Scrollbar personalizada */
+    .container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    
+    .container::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+    
+    @media (max-height: 700px) {
+      .container {
+        padding-top: 80px;
+      }
+      .card {
+        padding: 20px 30px;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .logo {
+        width: 150px;
+      }
+      .card {
+        padding: 20px;
+      }
+      .container {
+        padding: 100px 15px 30px;
+      }
     }
   </style>
 </head>
@@ -210,11 +308,11 @@
     const message = document.getElementById('message');
     const downloadTemplate = document.getElementById('downloadTemplate');
     const dropText = document.getElementById('dropText');
+    const container = document.querySelector('.container');
     
     let selectedFile = null;
     let processing = false;
 
-    // Descargar plantilla
     downloadTemplate.addEventListener('click', async () => {
       try {
         downloadTemplate.disabled = true;
@@ -241,7 +339,6 @@
       }
     });
 
-    // Drop zone interacciones
     dropZone.addEventListener('click', () => !processing && fileInput.click());
 
     dropZone.addEventListener('dragover', e => {
@@ -284,12 +381,11 @@
       results.style.display = 'none';
     }
 
-    // Procesar archivo con backend real
     uploadBtn.addEventListener('click', async () => {
       if (!selectedFile || processing) return;
 
       processing = true;
-      uploadBtn.textContent = ' Procesando...';
+      uploadBtn.textContent = '⏳ Procesando...';
       uploadBtn.disabled = true;
       message.style.display = 'none';
       results.style.display = 'none';
@@ -308,6 +404,11 @@
         if (data.success) {
           showMessage('success', data.message);
           showResults(data);
+          
+          // Scroll suave hacia resultados
+          setTimeout(() => {
+            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
         } else {
           showMessage('error', '❌ ' + (data.error || 'Error desconocido'));
         }
@@ -327,13 +428,13 @@
     }
 
     function showResults(data) {
-      let html = '<h3>📊 Resultados</h3>';
+      let html = '<h3>Resultados</h3>';
       html += `<p><strong>Canal:</strong> ${data.channelName || 'N/A'}</p>`;
       html += `<p><strong>Descripción:</strong> ${data.channelDescription || 'Sin descripción'}</p>`;
       html += `<p><strong>ID:</strong> ${data.channelId || 'N/A'}</p>`;
 
       if (data.summary) {
-        html += '<br><h4>Resumen:</h4>';
+        html += '<h4> Resumen:</h4>';
         html += `<p>Invitados: <strong>${data.summary.existingInvited}</strong></p>`;
         html += `<p>Fallidos: <strong>${data.summary.existingFailed}</strong></p>`;
         html += `<p>Emails enviados: <strong>${data.summary.newUsersEmailed}</strong></p>`;
@@ -342,14 +443,12 @@
       }
 
       if (data.existingUsers && data.existingUsers.length > 0) {
-        html += '<br><h4>Detalle:</h4><ul>';
-        data.existingUsers.slice(0, 10).forEach(u => {
+        html += '<h4>Detalle:</h4><ul>';
+        data.existingUsers.forEach(u => {
           const icon = u.status === 'invited' ? '✅' : '❌';
-          html += `<li>${icon} ${u.email}</li>`;
+          const reason = u.reason ? ` (${u.reason})` : '';
+          html += `<li>${icon} ${u.email}${reason}</li>`;
         });
-        if (data.existingUsers.length > 10) {
-          html += `<li>... y ${data.existingUsers.length - 10} más</li>`;
-        }
         html += '</ul>';
       }
 
