@@ -10,29 +10,29 @@
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     html, body {
       height: 100%;
-      overflow: hidden;
+      overflow: hidden; /* 🚫 sin scroll al inicio */
     }
-    
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #44749d;
       color: #333;
     }
-    
+
     .container {
-      height: 100vh;
-      overflow-y: auto; /* Scroll aquí */
-      overflow-x: hidden;
+      min-height: 100vh;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start; /* Cambiado a flex-start */
-      padding: 120px 20px 40px; /* Más espacio arriba y abajo */
+      justify-content: flex-start;
+      padding: 120px 20px 40px;
+      overflow: hidden; /* 🚫 evita scroll interno */
     }
-    
+
     .logo {
       position: fixed;
       top: 30px;
@@ -40,7 +40,7 @@
       width: 200px;
       z-index: 10;
     }
-    
+
     .card {
       background-color: #fff;
       border-radius: 10px;
@@ -48,16 +48,16 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
       max-width: 420px;
       width: 100%;
-      margin-bottom: 40px; /* Espacio al final */
+      margin-bottom: 40px;
     }
-    
+
     h1 {
       text-align: center;
       margin-bottom: 20px;
       font-size: 1.8rem;
       color: #000;
     }
-    
+
     .content-box {
       background-color: rgba(95, 138, 194, 0.2);
       color: #000;
@@ -65,25 +65,25 @@
       border-radius: 8px;
       margin-bottom: 20px;
     }
-    
+
     .content-box h3 {
       text-align: center;
       margin-top: 0;
       margin-bottom: 15px;
       font-size: 1.2rem;
     }
-    
+
     .content-box p {
       text-align: left;
       margin: 4px 0;
       font-size: 0.95rem;
     }
-    
+
     .btn-container {
       text-align: center;
       margin-top: 15px;
     }
-    
+
     .btn-yellow {
       background-color: #ffce5c;
       border: none;
@@ -93,16 +93,16 @@
       font-weight: 600;
       transition: background 0.3s;
     }
-    
+
     .btn-yellow:hover {
       background-color: #ffcb33;
     }
-    
+
     .btn-yellow:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-    
+
     .drop-zone {
       border: 2px dashed #ffd766;
       border-radius: 8px;
@@ -113,23 +113,23 @@
       cursor: pointer;
       transition: background 0.3s, border 0.3s;
     }
-    
+
     .drop-zone:hover {
       background-color: rgba(255, 215, 102, 0.1);
       border-color: #ffaa00;
     }
-    
+
     .drop-zone p {
       margin: 0;
       opacity: 0.8;
       font-weight: 500;
       letter-spacing: 0.5px;
     }
-    
+
     .drop-zone input[type="file"] {
       display: none;
     }
-    
+
     .btn-blue {
       background-color: #5b86a1;
       border: none;
@@ -141,16 +141,16 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-    
+
     .btn-blue:hover:not(:disabled) {
       background-color: #467289;
     }
-    
+
     .btn-blue:disabled {
       background-color: #99a9b5;
       cursor: not-allowed;
     }
-    
+
     .message {
       padding: 12px;
       border-radius: 6px;
@@ -159,19 +159,19 @@
       display: none;
       animation: slideDown 0.3s ease;
     }
-    
+
     .message.success {
       background-color: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
-    
+
     .message.error {
       background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
-    
+
     .result-box {
       background-color: #e7f0f8;
       padding: 15px;
@@ -181,31 +181,31 @@
       display: none;
       animation: slideDown 0.3s ease;
     }
-    
+
     .result-box h3 {
       margin-top: 0;
       color: #0a3055;
       font-size: 1.2rem;
     }
-    
+
     .result-box h4 {
       margin-bottom: 5px;
       margin-top: 15px;
       font-size: 0.95rem;
       color: #0a3055;
     }
-    
+
     .result-box p {
       margin: 5px 0;
       font-size: 0.9rem;
     }
-    
+
     .result-box ul {
       list-style: none;
       padding: 0;
       margin: 10px 0;
     }
-    
+
     .result-box li {
       padding: 5px;
       margin: 3px 0;
@@ -213,59 +213,10 @@
       border-radius: 4px;
       font-size: 0.85rem;
     }
-    
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    /* Scrollbar personalizada */
-    .container::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    .container::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .container::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-    }
-    
-    .container::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-    
-    @media (max-height: 700px) {
-      .container {
-        padding-top: 80px;
-      }
-      .card {
-        padding: 20px 30px;
-      }
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-      }
-    }
 
-    @media (max-width: 500px) {
-      .logo {
-        width: 150px;
-      }
-      .card {
-        padding: 20px;
-      }
-      .container {
-        padding: 100px 15px 30px;
-      }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -308,19 +259,20 @@
     const message = document.getElementById('message');
     const downloadTemplate = document.getElementById('downloadTemplate');
     const dropText = document.getElementById('dropText');
-    const container = document.querySelector('.container');
-    
+
     let selectedFile = null;
     let processing = false;
+
+    // 🚫 Bloquear scroll al cargar
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     downloadTemplate.addEventListener('click', async () => {
       try {
         downloadTemplate.disabled = true;
         downloadTemplate.textContent = 'Descargando...';
-
         const response = await fetch('/api/download-template');
         const blob = await response.blob();
-        
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -329,7 +281,6 @@
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-
         showMessage('success', '✅ Plantilla descargada correctamente');
       } catch (error) {
         showMessage('error', '❌ Error descargando plantilla: ' + error.message);
@@ -340,37 +291,22 @@
     });
 
     dropZone.addEventListener('click', () => !processing && fileInput.click());
-
     dropZone.addEventListener('dragover', e => {
       e.preventDefault();
-      if (!processing) {
-        dropZone.style.backgroundColor = 'rgba(255,215,102,0.15)';
-      }
+      if (!processing) dropZone.style.backgroundColor = 'rgba(255,215,102,0.15)';
     });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = 'transparent';
-    });
-
+    dropZone.addEventListener('dragleave', () => dropZone.style.backgroundColor = 'transparent');
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       dropZone.style.backgroundColor = 'transparent';
-      
       if (processing) return;
-      
       const file = e.dataTransfer.files[0];
-      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
-        handleFileSelect(file);
-      } else {
-        showMessage('error', '❌ Solo se permiten archivos Excel (.xlsx o .xls)');
-      }
+      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) handleFileSelect(file);
+      else showMessage('error', '❌ Solo se permiten archivos Excel (.xlsx o .xls)');
     });
-
     fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
-      if (file) {
-        handleFileSelect(file);
-      }
+      if (file) handleFileSelect(file);
     });
 
     function handleFileSelect(file) {
@@ -379,11 +315,13 @@
       uploadBtn.disabled = false;
       message.style.display = 'none';
       results.style.display = 'none';
+      // 🚫 Bloquear scroll al seleccionar nuevo archivo
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     }
 
     uploadBtn.addEventListener('click', async () => {
       if (!selectedFile || processing) return;
-
       processing = true;
       uploadBtn.textContent = '⏳ Procesando...';
       uploadBtn.disabled = true;
@@ -393,25 +331,20 @@
       try {
         const formData = new FormData();
         formData.append('file', selectedFile);
-
-        const response = await fetch('/api/auto-create-channel', {
-          method: 'POST',
-          body: formData
-        });
-
+        const response = await fetch('/api/auto-create-channel', { method: 'POST', body: formData });
         const data = await response.json();
 
         if (data.success) {
           showMessage('success', data.message);
           showResults(data);
-          
+
+          // ✅ Activar scroll cuando hay resultados
+          document.body.style.overflow = "auto";
+          document.documentElement.style.overflow = "auto";
+
           // Scroll suave hacia resultados
-          setTimeout(() => {
-            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 200);
-        } else {
-          showMessage('error', '❌ ' + (data.error || 'Error desconocido'));
-        }
+          setTimeout(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+        } else showMessage('error', '❌ ' + (data.error || 'Error desconocido'));
       } catch (error) {
         showMessage('error', '❌ Error al procesar: ' + error.message);
       } finally {
@@ -434,7 +367,7 @@
       html += `<p><strong>ID:</strong> ${data.channelId || 'N/A'}</p>`;
 
       if (data.summary) {
-        html += '<h4> Resumen:</h4>';
+        html += '<h4>Resumen:</h4>';
         html += `<p>Invitados: <strong>${data.summary.existingInvited}</strong></p>`;
         html += `<p>Fallidos: <strong>${data.summary.existingFailed}</strong></p>`;
         html += `<p>Emails enviados: <strong>${data.summary.newUsersEmailed}</strong></p>`;

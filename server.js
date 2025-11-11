@@ -159,7 +159,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     try {
       channel = await slackClient.conversations.create({
         name: config.channelName.toLowerCase().replace(/\s+/g, '-'),
-        is_private: false
+        is_private: true
       });
       console.log(`   ✅ Canal creado: ${channel.channel.id}`);
     } catch (error) {
