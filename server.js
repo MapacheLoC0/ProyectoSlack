@@ -93,9 +93,6 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     if (!config.channelName) {
       throw new Error('❌ Falta NOMBRE_CANAL en el Excel (fila 1)');
     }
-    if (!config.slackToken) {
-      throw new Error('❌ Falta SLACK_TOKEN en el Excel (fila 3)');
-    }
     if (emails.length === 0) {
       throw new Error('❌ No se encontraron correos en el Excel');
     }
@@ -107,7 +104,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     console.log(`   Correos: ${emails.length}`);
 
     // 3. INICIALIZAR SLACK CLIENT CON TOKEN DEL EXCEL
-    slackClient = new WebClient(config.slackToken);
+    slackClient = new WebClient(process.env.SLACK_BOT_TOKEN);
 
     // 4. VERIFICAR TOKEN
     try {
@@ -203,7 +200,8 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
 
     // 9. ENVIAR EMAILS A NUEVOS USUARIOS CON SENDGRID
     let emailsSent = 0;
-    if (newUsers.length > 0 && config.workspaceInviteLink) {
+    const inviteLink = process.env.WORKSPACE_INVITE
+    if (newUsers.length > 0 && inviteLink) {
       console.log('\n📧 Enviando invitaciones por email con SendGrid...');
 
       if (process.env.SENDGRID_API_KEY && process.env.EMAIL_FROM) {
@@ -222,7 +220,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
                   <p>Has sido invitado al canal <strong>${config.channelName}</strong> en Slack.</p>
                   <p><strong>Paso 1:</strong> Únete al workspace:</p>
                   <p style="text-align: center; margin: 30px 0;">
-                    <a href="${config.workspaceInviteLink}" 
+                    <a href="${inviteLink}" 
                       style="background: #611f69; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
                       Unirme a Slack
                     </a>
@@ -310,10 +308,8 @@ app.get('/api/download-template', (req, res) => {
 
     // Crear datos de la plantilla
     const data = [
-      ['NOMBRE_CANAL', 'semillero-2025'],
-      ['DESCRIPCION', 'Canal para el programa de formación Semillero'],
-      ['SLACK_TOKEN', 'xoxb-tu-token-de-slack-aqui'],
-      ['WORKSPACE_INVITE', 'https://join.slack.com/t/tu-workspace/shared_invite/xxxxx'],
+      ['NOMBRE_CANAL', 'CPC-2025/2'],
+      ['DESCRIPCION', 'Canal para la Universidad Católica Ejemplo 2025'],
       ['CORREO', ''],
       ['ejemplo1@correo.com', ''],
       ['ejemplo2@correo.com', ''],
@@ -372,9 +368,9 @@ app.listen(PORT, () => {
   console.log('📋 Formato del Excel requerido:');
   console.log('   Fila 1: NOMBRE_CANAL | nombre-del-canal');
   console.log('   Fila 2: DESCRIPCION | Descripción');
-  console.log('   Fila 3: SLACK_TOKEN | xoxb-...');
-  console.log('   Fila 4: WORKSPACE_INVITE | https://...');
-  console.log('   Fila 5: CORREO');
-  console.log('   Fila 6+: Un correo por fila\n');
+  console.log('   Fila 3: CORREO');
+  console.log('   Fila 4+: Un correo por fila\n');
   
 });
+const { startMonitorBot } = require('./bot-monitor');
+startMonitorBot();
