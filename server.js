@@ -39,6 +39,10 @@ function parseExcelAuto(filePath) {
         config.channelName = value;
       } else if (key === 'DESCRIPCION' || key === 'DESCRIPTION') {
         config.channelDescription = value;
+      } else if (key === 'SLACK_TOKEN' || key === 'TOKEN') {
+        config.slackToken = value;
+      } else if (key === 'WORKSPACE_INVITE' || key === 'INVITE_LINK') {
+        config.workspaceInviteLink = value;
       } else if (key === 'CORREO' || key === 'EMAIL' || key === 'EMAILS') {
         emailStartRow = i + 1;
         break;
@@ -364,9 +368,12 @@ app.listen(PORT, () => {
   console.log('📋 Formato del Excel requerido:');
   console.log('   Fila 1: NOMBRE_CANAL | nombre-del-canal');
   console.log('   Fila 2: DESCRIPCION | Descripción');
-  console.log('   Fila 3: CORREO');
-  console.log('   Fila 4+: Un correo por fila\n');
+  console.log('   Fila 3: SLACK_TOKEN | xoxb-...');
+  console.log('   Fila 4: WORKSPACE_INVITE | https://...');
+  console.log('   Fila 5: CORREO');
+  console.log('   Fila 6+: Un correo por fila\n');
   
 });
+// Al final del archivo, después de app.listen()
 const { startMonitorBot } = require('./bot-monitor');
 startMonitorBot();
