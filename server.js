@@ -75,7 +75,7 @@ function isValidEmail(email) {
 // ==========================================
 app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => {
   console.log('\n🚀 ===== PROCESO AUTOMÁTICO INICIADO =====');
-  
+
   let slackClient = null;
   let emailTransporter = null;
 
@@ -144,7 +144,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
           invalidEmails.push({ email, reason: error.data?.error });
         }
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
@@ -180,7 +180,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     // 8. INVITAR USUARIOS EXISTENTES
     console.log('\n👤 Invitando usuarios existentes...');
     const inviteResults = [];
-    
+
     for (const user of existingUsers) {
       try {
         await slackClient.conversations.invite({
@@ -204,11 +204,11 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     let emailsSent = 0;
     if (newUsers.length > 0 && config.workspaceInviteLink) {
       console.log('\n📧 Enviando invitaciones por email con SendGrid...');
-      
+
       if (process.env.SENDGRID_API_KEY && process.env.EMAIL_FROM) {
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-        
+
         for (const user of newUsers) {
           try {
             await sgMail.send({
@@ -233,13 +233,13 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
                 </div>
               `
             });
-            
+
             emailsSent++;
             console.log(`   ✅ Email enviado: ${user.email}`);
           } catch (error) {
             console.log(`   ❌ Error email: ${user.email} - ${error.message}`);
           }
-          
+
           // Pausa para evitar rate limits
           await new Promise(resolve => setTimeout(resolve, 100));
         }
@@ -301,7 +301,7 @@ app.get('/api/download-template', (req, res) => {
   try {
     // Crear libro de Excel
     const workbook = XLSX.utils.book_new();
-    
+
     // Crear datos de la plantilla
     const data = [
       ['NOMBRE_CANAL', 'semillero-2025'],
@@ -313,27 +313,27 @@ app.get('/api/download-template', (req, res) => {
       ['ejemplo2@correo.com', ''],
       ['ejemplo3@correo.com', '']
     ];
-    
+
     // Crear hoja de trabajo
     const worksheet = XLSX.utils.aoa_to_sheet(data);
-    
+
     // Ajustar ancho de columnas
     worksheet['!cols'] = [
       { wch: 20 },  // Columna A
       { wch: 50 }   // Columna B
     ];
-    
+
     // Agregar hoja al libro
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Plantilla Slack');
-    
+
     // Generar buffer
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    
+
     // Enviar archivo
     res.setHeader('Content-Disposition', 'attachment; filename=plantilla_slack.xlsx');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.send(buffer);
-    
+
     console.log('📥 Plantilla descargada');
   } catch (error) {
     console.error('Error generando plantilla:', error);
@@ -370,4 +370,5 @@ app.listen(PORT, () => {
   console.log('   Fila 4: WORKSPACE_INVITE | https://...');
   console.log('   Fila 5: CORREO');
   console.log('   Fila 6+: Un correo por fila\n');
+  
 });
