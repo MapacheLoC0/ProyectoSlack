@@ -39,10 +39,6 @@ function parseExcelAuto(filePath) {
         config.channelName = value;
       } else if (key === 'DESCRIPCION' || key === 'DESCRIPTION') {
         config.channelDescription = value;
-      } else if (key === 'SLACK_TOKEN' || key === 'TOKEN') {
-        config.slackToken = value;
-      } else if (key === 'WORKSPACE_INVITE' || key === 'INVITE_LINK') {
-        config.workspaceInviteLink = value;
       } else if (key === 'CORREO' || key === 'EMAIL' || key === 'EMAILS') {
         emailStartRow = i + 1;
         break;
