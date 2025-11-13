@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "monitor": "node bot-monitor.js",
+    "dev": "nodemon server.js & nodemon bot-monitor.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

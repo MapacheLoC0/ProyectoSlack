@@ -7,6 +7,7 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 const sgMail = require('@sendgrid/mail');
+const { addPending } = require('./bot-monitor');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -159,7 +160,7 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
     try {
       channel = await slackClient.conversations.create({
         name: config.channelName.toLowerCase().replace(/\s+/g, '-'),
-        is_private: false
+        is_private: true
       });
       console.log(`   ✅ Canal creado: ${channel.channel.id}`);
     } catch (error) {
@@ -236,6 +237,11 @@ app.post('/api/auto-create-channel', upload.single('file'), async (req, res) => 
 
             emailsSent++;
             console.log(`   ✅ Email enviado: ${user.email}`);
+
+            // Agregar a pendientes para seguimiento
+            if (channel.channel.is_private) {
+              addPending(user.email, channel.channel.id, config.channel.name);
+            }
           } catch (error) {
             console.log(`   ❌ Error email: ${user.email} - ${error.message}`);
           }
