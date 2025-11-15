@@ -7,7 +7,7 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 const sgMail = require('@sendgrid/mail');
-const { addPending, startMonitorBot } = require('./bot-monitor');
+const { addPending, checkPendingInvites } = require('./bot-monitor');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -462,6 +462,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// ==========================================
+// ENDPOINT: EJECUTAR BOT MONITOR (para cron)
+// ==========================================
+app.get('/api/run-monitor', async (req, res) => {
+  try {
+    console.log("🕒 Cron externo activó el monitor...");
+    await checkPendingInvites();
+    res.json({ success: true, message: "Monitor ejecutado correctamente" });
+  } catch (error) {
+    console.error("❌ Error ejecutando monitor:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
+
 // Crear carpetas necesarias
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 if (!fs.existsSync('public')) fs.mkdirSync('public');
@@ -484,9 +500,3 @@ app.listen(PORT, () => {
   console.log('   Fila 4+: Un correo por fila\n');
 });
 
-// ==========================================
-// INICIAR BOT DE MONITOREO
-// ==========================================
-startMonitorBot().catch(error => {
-  console.error('❌ Error al iniciar bot de monitoreo:', error);
-});
